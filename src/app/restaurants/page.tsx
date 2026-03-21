@@ -32,19 +32,19 @@ const mockRestaurants: Restaurant[] = [
 async function getRestaurants(): Promise<RestaurantJson> {
   const res = await fetch('https://backendpjforfrontend.vercel.app/api/v1/restaurants', { 
     next: { tags: ['restaurants'] },
-    cache: 'no-store' // ไม่ต้อง cache จะได้เทสสลับไปมาได้ชัวร์ๆ
+    cache: 'no-store'
   });
   if (!res.ok) throw new Error('Failed to fetch restaurants');
   return res.json();
 }
 
-// รับ props searchParams เพื่อดูว่ามี ?mock=true ต่อท้าย URL ไหม
 export default async function RestaurantsPage({
   searchParams,
 }: {
-  searchParams: { mock?: string };
+  searchParams: Promise<{ mock?: string }>;
 }) {
-  const isMockMode = searchParams.mock === 'true'; // เช็คสถานะปัจจุบัน
+  const { mock } = await searchParams;
+  const isMockMode = mock === 'true';
   let restaurants: Restaurant[] = [];
 
   if (isMockMode) {
@@ -61,7 +61,7 @@ export default async function RestaurantsPage({
 
   return (
     <main className="container mx-auto p-4">
-      {/* 🔘 ปุ่มสลับโหมด มีแค่หน้านี้หน้าเดียว */}
+      {/* 🔘 ปุ่มสลับโหมด */}
       <div className="flex justify-center mt-6 mb-2">
         {isMockMode ? (
           <Link href="/restaurants" className="bg-green-500 text-white font-bold py-2 px-6 rounded-full shadow-lg hover:bg-green-600 transition flex items-center gap-2">
@@ -79,22 +79,28 @@ export default async function RestaurantsPage({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {restaurants.map((rest: Restaurant) => (
           <div key={rest._id} className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
-            <div className="h-48 bg-gray-300 relative">
-              <div className="absolute inset-0 flex items-center justify-center text-gray-500">Image Placeholder</div>
+            
+            {/* Clickable area → restaurant detail page */}
+            <Link href={`/restaurants/${rest._id}`} className="flex flex-col flex-grow hover:opacity-90 transition">
+              <div className="h-48 bg-gray-300 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-gray-500">Image Placeholder</div>
+              </div>
+              <div className="p-4 flex-grow">
+                <h3 className="font-bold text-xl mb-2">{rest.name}</h3>
+                <p className="text-gray-600 text-sm mb-1">{rest.address}, {rest.district}, {rest.province}</p>
+              </div>
+            </Link>
+
+            {/* Reserve button — separate from the card link */}
+            <div className="p-4">
+              <Link 
+                href={`/restaurants/${rest._id}/reservations${isMockMode ? '?mock=true' : ''}`} 
+                className="block w-full text-center bg-gray-900 !text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition"
+              >
+                Go to reserve
+              </Link>
             </div>
-            <div className="p-4 flex-grow">
-              <h3 className="font-bold text-xl mb-2">{rest.name}</h3>
-              <p className="text-gray-600 text-sm mb-1">{rest.address}, {rest.district}, {rest.province}</p>
-            </div>
-            <div className="p-4 mt-auto">
-                {/* 🔴 จุดที่แก้: แนบ ?mock=true ไปด้วยถ้าเปิดโหมด Mock อยู่ */}
-                <Link 
-                  href={`/restaurants/${rest._id}/reservations${isMockMode ? '?mock=true' : ''}`} 
-                  className="block w-full text-center bg-gray-900 !text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition"
-                >
-                  Go to reserve
-                </Link>
-            </div>
+
           </div>
         ))}
       </div>

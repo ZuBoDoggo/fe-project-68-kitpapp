@@ -191,9 +191,6 @@ export default function RestaurantsPage() {
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold">Restaurants</h1>
-          <p className="text-gray-500 mt-1">
-            {isMockMode ? "🟢 Mock Mode" : "🌐 Real API"}
-          </p>
         </div>
 
         {isAdmin && (
@@ -260,63 +257,143 @@ export default function RestaurantsPage() {
             
             <form onSubmit={handleSubmitForm} className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* แถวที่ 1 */}
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Restaurant Name *</label>
-                  <input type="text" name="name" required maxLength={50} value={formData.name} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="ไม่เกิน 50 ตัวอักษร"/>
-                </div>
-
-                {/* แถวที่ 2 */}
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Address *</label>
-                  <input type="text" name="address" required value={formData.address} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="บ้านเลขที่, ถนน, ซอย"/>
-                </div>
-
-                {/* แถวที่ 3 */}
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">District (เขต/อำเภอ) *</label>
-                  <input type="text" name="district" required value={formData.district} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. คลองเตย"/>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Province (จังหวัด) *</label>
-                  <input type="text" name="province" required value={formData.province} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. กรุงเทพมหานคร"/>
-                </div>
-
-                {/* แถวที่ 4 */}
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Postal Code *</label>
-                  <input type="text" name="postalcode" required maxLength={5} value={formData.postalcode} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. 10110"/>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Region (ภูมิภาค) *</label>
-                  <input type="text" name="region" required value={formData.region} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. ภาคกลาง"/>
-                </div>
-
-                {/* แถวที่ 5 */}
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Telephone *</label>
-                  <input type="tel" name="tel" required value={formData.tel} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. 02-123-4567"/>
-                </div>
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <label className="block text-sm font-bold text-gray-700 mb-1">Open Time *</label>
-                    <input type="time" name="open" required value={formData.open} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"/>
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-sm font-bold text-gray-700 mb-1">Close Time *</label>
-                    <input type="time" name="close" required value={formData.close} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"/>
-                  </div>
-                </div>
-
-                {/* แถวที่ 6 */}
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Image URL *</label>
-                  <input type="url" name="imageUrl" required value={formData.imageUrl} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://example.com/image.jpg"/>
-                  <p className="text-xs text-gray-500 mt-1">Must be a valid HTTP/HTTPS URL.</p>
-                </div>
-
+    
+              {/* แถวที่ 1 */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-bold text-gray-700 mb-1">Restaurant Name *</label>
+                <input 
+                  type="text" 
+                  name="name" 
+                  required 
+                  maxLength={50} 
+                  value={formData.name} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg px-3 py-2 text-black placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none" 
+                  placeholder="ไม่เกิน 50 ตัวอักษร"
+                />
               </div>
+
+              {/* แถวที่ 2 */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-bold text-gray-700 mb-1">Address *</label>
+                <input 
+                  type="text" 
+                  name="address" 
+                  required 
+                  value={formData.address} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg px-3 py-2 text-black placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none" 
+                  placeholder="บ้านเลขที่, ถนน, ซอย"
+                />
+              </div>
+
+              {/* แถวที่ 3 */}
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-1">District (เขต/อำเภอ) *</label>
+                <input 
+                  type="text" 
+                  name="district" 
+                  required 
+                  value={formData.district} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg px-3 py-2 text-black placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none" 
+                  placeholder="e.g. คลองเตย"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Province (จังหวัด) *</label>
+                <input 
+                  type="text" 
+                  name="province" 
+                  required 
+                  value={formData.province} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg px-3 py-2 text-black placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none" 
+                  placeholder="e.g. กรุงเทพมหานคร"
+                />
+              </div>
+
+              {/* แถวที่ 4 */}
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Postal Code *</label>
+                <input 
+                  type="text" 
+                  name="postalcode" 
+                  required 
+                  maxLength={5} 
+                  value={formData.postalcode} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg px-3 py-2 text-black placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none" 
+                  placeholder="e.g. 10110"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Region (ภูมิภาค) *</label>
+                <input 
+                  type="text" 
+                  name="region" 
+                  required 
+                  value={formData.region} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg px-3 py-2 text-black placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none" 
+                  placeholder="e.g. ภาคกลาง"
+                />
+              </div>
+
+              {/* แถวที่ 5 */}
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Telephone *</label>
+                <input 
+                  type="tel" 
+                  name="tel" 
+                  required 
+                  value={formData.tel} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg px-3 py-2 text-black placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none" 
+                  placeholder="e.g. 02-123-4567"
+                />
+              </div>
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <label className="block text-sm font-bold text-gray-700 mb-1">Open Time *</label>
+                  <input 
+                    type="time" 
+                    name="open" 
+                    required 
+                    value={formData.open} 
+                    onChange={handleChange} 
+                    className="w-full border rounded-lg px-3 py-2 text-black focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-bold text-gray-700 mb-1">Close Time *</label>
+                  <input 
+                    type="time" 
+                    name="close" 
+                    required 
+                    value={formData.close} 
+                    onChange={handleChange} 
+                    className="w-full border rounded-lg px-3 py-2 text-black focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* แถวที่ 6 */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-bold text-gray-700 mb-1">Image URL *</label>
+                <input 
+                  type="url" 
+                  name="imageUrl" 
+                  required 
+                  value={formData.imageUrl} 
+                  onChange={handleChange} 
+                  className="w-full border rounded-lg px-3 py-2 text-black placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none" 
+                  placeholder="https://example.com/image.jpg"
+                />
+                <p className="text-xs text-gray-500 mt-1">Must be a valid HTTP/HTTPS URL.</p>
+              </div>
+
+            </div>
 
               {/* ปุ่มบันทึก */}
               <div className="pt-6 flex gap-3 mt-4 border-t">

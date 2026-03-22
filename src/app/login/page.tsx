@@ -2,6 +2,7 @@
 'use client'
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -47,6 +48,17 @@ export default function LoginPage() {
           <button type="submit" className="w-full bg-gray-900 text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition duration-300">
             Login
           </button>
+          <div >
+            <div className='text-gray-300'>
+                --------------------------------------------
+            </div>
+            <div className='flex items-center justify-center text-gray-500'>
+            if you not have UserID
+            </div>
+            <Link href="/register" className='flex items-center justify-center text-xl gap-6 font-extrabold text-yellow-400 hover:bg-gray-700 transition'>
+            register
+            </Link>
+          </div>
         </form>
       </div>
     </div>

@@ -229,7 +229,7 @@ export default function RestaurantsPage() {
                 <div className="mt-auto space-y-3">
                   <Link href={`/restaurants/${rest._id}/reservations${isMockMode ? '?mock=true' : ''}`}>
                     <button className="w-full bg-gray-900 hover:bg-gray-800 text-white py-2 rounded-lg font-semibold transition">
-                      View / Book Reservation
+                      Book Reservation
                     </button>
                   </Link>
 

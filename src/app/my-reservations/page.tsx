@@ -1,17 +1,16 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-// 📦 ข้อมูล Mock สำหรับเทส
 const mockMyReservations = [
   { _id: 'r1', apptDate: '2026-03-25T18:00:00', restaurant: { _id: 'rest1', name: 'อร่อยเหาะ เรสเตอรองต์' }, user: { name: 'สมชาย ใจดี', email: 'somchai@example.com' } },
   { _id: 'r2', apptDate: '2026-03-26T12:00:00', restaurant: { _id: 'rest1', name: 'อร่อยเหาะ เรสเตอรองต์' }, user: { name: 'สมหญิง รักเรียน', email: 'somying@example.com' } },
   { _id: 'r3', apptDate: '2026-03-28T19:00:00', restaurant: { _id: 'rest2', name: 'แซ่บนัว ครัวอีสาน' }, user: { name: 'John Doe', email: 'john@example.com' } }
 ];
 
-export default function MyReservationsPage() {
+function MyReservationsContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -22,7 +21,6 @@ export default function MyReservationsPage() {
 
   const [groupedReservations, setGroupedReservations] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
-
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDate, setEditDate] = useState<string>('');
 
@@ -46,8 +44,8 @@ export default function MyReservationsPage() {
       const grouped = dataToProcess.reduce((acc: any, curr: any) => {
         const restId = curr.restaurant?._id || curr.restaurant;
         const restName = curr.restaurant?.name || 'Unknown Restaurant';
-        if (!acc[restId]) acc[restId] = { name: restName, items: [] }; 
-        acc[restId].items.push(curr); 
+        if (!acc[restId]) acc[restId] = { name: restName, items: [] };
+        acc[restId].items.push(curr);
         return acc;
       }, {});
 
@@ -68,26 +66,18 @@ export default function MyReservationsPage() {
     if (!confirm("Are you sure you want to delete this reservation?")) return;
     if (isMockMode) { alert("Mock Mode: ลบข้อมูลสำเร็จ!"); return; }
     try {
-        console.log("กำลังจะลบ ID:", id);
-        console.log("Token ที่ใช้:", token);
-
-        const res = await fetch(`https://backendpjforfrontend.vercel.app/api/v1/reservations/${id}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (res.ok) {
-            alert("ลบการจองสำเร็จ!");
-            fetchMyReservations();
-        } else {
-            // 🔴 ดึงข้อความ Error จาก Backend ออกมาอ่าน!
-            const errorData = await res.json();
-            console.error("Backend Error:", errorData);
-            alert(`ไม่สามารถลบได้: ${errorData.message || res.statusText}`);
-        }
-    } catch (err) { 
-        console.error("Fetch Error:", err); 
-    }
+      const res = await fetch(`https://backendpjforfrontend.vercel.app/api/v1/reservations/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        alert("ลบการจองสำเร็จ!");
+        fetchMyReservations();
+      } else {
+        const errorData = await res.json();
+        alert(`ไม่สามารถลบได้: ${errorData.message || res.statusText}`);
+      }
+    } catch (err) { console.error("Fetch Error:", err); }
   };
 
   const handleSaveUpdate = async (id: string) => {
@@ -115,7 +105,7 @@ export default function MyReservationsPage() {
       <h1 className="text-3xl font-bold mb-6 text-center">
         {isAdmin ? "All System Reservations (Admin)" : "My Reservations"}
       </h1>
-      
+
       {restaurantIds.length === 0 ? (
         <div className="text-center bg-white p-8 rounded-lg shadow-md">
           <p className="text-gray-500 text-lg mb-4">No reservations found.</p>
@@ -132,7 +122,7 @@ export default function MyReservationsPage() {
                 <div className="bg-gray-800 text-white px-6 py-4">
                   <h2 className="text-xl font-bold">{restaurantGroup.name}</h2>
                 </div>
-                
+
                 <div className="p-6">
                   <ul className="space-y-4">
                     {sortedItems.map((res: any, index: number) => {
@@ -141,15 +131,13 @@ export default function MyReservationsPage() {
 
                       return (
                         <li key={res._id} className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-4 last:border-0 last:pb-0">
-                          
                           <div className="flex items-center gap-4 flex-1">
                             <span className="bg-blue-100 text-blue-800 font-semibold px-3 py-1 rounded-full text-sm whitespace-nowrap">
                               Reservation #{index + 1}
                             </span>
-                            
                             {isEditing ? (
-                              <input 
-                                type="datetime-local" 
+                              <input
+                                type="datetime-local"
                                 value={editDate}
                                 onChange={(e) => setEditDate(e.target.value)}
                                 className="border rounded px-2 py-1 text-gray-700 w-full md:w-auto"
@@ -162,15 +150,12 @@ export default function MyReservationsPage() {
                           </div>
 
                           <div className="flex flex-wrap items-center gap-2">
-                            {/* Admin เท่านั้นที่เห็นอีเมลคนอื่น */}
                             {isAdmin && (
                               <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-md border border-gray-200 text-sm">
                                 <span className="text-gray-500">Booked by:</span>
                                 <span className="font-bold text-gray-800">{res.user?.email || res.user?.name || res.user || 'Unknown'}</span>
                               </div>
                             )}
-
-                            {/* 🟢 ทุกคน (User & Admin) เห็นปุ่ม Edit/Delete ของตัวเองได้แล้ว! */}
                             <div className="flex gap-2">
                               {isEditing ? (
                                 <>
@@ -188,7 +173,6 @@ export default function MyReservationsPage() {
                               )}
                             </div>
                           </div>
-                          
                         </li>
                       );
                     })}
@@ -200,5 +184,13 @@ export default function MyReservationsPage() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function MyReservationsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-bold">Loading...</div>}>
+      <MyReservationsContent />
+    </Suspense>
   );
 }

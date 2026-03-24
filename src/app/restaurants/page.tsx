@@ -190,7 +190,7 @@ export default function RestaurantsPage() {
       
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Restaurants</h1>
+          <h1 className="text-3xl font-bold text-black">Restaurants</h1>
         </div>
 
         {isAdmin && (

@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, use } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -8,12 +8,12 @@ const mockAdminReservations = [
   { _id: 'res-02', apptDate: '2026-03-25T19:30:00', user: { name: 'สมหญิง รักเรียน' }, Reservat_at: '2026-03-02T11:20:00', restaurant: { name: 'อร่อยเหาะ เรสเตอรองต์' } }
 ];
 
-export default function ReservationPage({ params }: { params: { id: string } }) {
+export default function ReservationPage({ params }: { params: Promise<{ id: string }> }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const restaurantId = params?.id;
+  const { id: restaurantId } = use(params);
   const isMockMode = searchParams.get('mock') === 'true';
   const isAdmin = (session as any)?.user?.role === 'admin';
   const token = (session as any)?.user?.token;
@@ -23,10 +23,33 @@ export default function ReservationPage({ params }: { params: { id: string } }) 
   const [adminEmail, setAdminEmail] = useState('');
   const [reservationsList, setReservationsList] = useState<any[]>([]);
   const [isLoadingList, setIsLoadingList] = useState(false);
+  const [restaurantName, setRestaurantName] = useState('');
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDate, setEditDate] = useState('');
   const [editTime, setEditTime] = useState('');
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (status === 'unauthenticated' && !isMockMode) {
+      router.push('/api/auth/signin');
+      alert("Please log in first \nกรุณา log in ก่อนทำการจอง");
+    }
+  }, [status, isMockMode, router]);
+
+  // Fetch restaurant name
+  useEffect(() => {
+    if (isMockMode) { setRestaurantName('อร่อยเหาะ เรสเตอรองต์'); return; }
+    if (!token || !restaurantId) return;
+    fetch(`https://backendpjforfrontend.vercel.app/api/v1/restaurants/${restaurantId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then((data: any) => {
+        setRestaurantName(data.data?.name || '');
+      })
+      .catch(console.error);
+  }, [token, restaurantId, isMockMode, status]);
 
   const fetchReservations = useCallback(async () => {
     if (!token && !isMockMode) return;
@@ -141,10 +164,17 @@ export default function ReservationPage({ params }: { params: { id: string } }) 
     <div className="min-h-screen flex items-center justify-center font-bold">Loading...</div>
   );
 
+  if (status === 'unauthenticated' && !isMockMode) return null;
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4 flex-col mt-8">
-
       <div className="mb-6 text-center">
+        <p className="text-lg text-gray-500 mb-1">
+          Booking{' '}
+          <span className="font-semibold text-gray-700">
+            {restaurantName || '...'}
+          </span>
+        </p>
         <h2 className="text-3xl font-bold mb-2 text-yellow-400">
           {isAdmin ? "Restaurant Reservations (Admin)" : "Make & Manage Reservations"}
         </h2>
@@ -255,7 +285,7 @@ export default function ReservationPage({ params }: { params: { id: string } }) 
                     <td className="p-3">{index + 1}</td>
 
                     <td className="p-3 font-semibold text-indigo-600">
-                      {res.restaurant?.name || 'Unknown Restaurant'}
+                      {res.restaurant?.name || restaurantName || 'Unknown Restaurant'}
                     </td>
 
                     {isAdmin && (

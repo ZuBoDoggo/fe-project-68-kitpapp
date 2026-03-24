@@ -3,6 +3,21 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
+import { Playfair_Display, Mitr } from 'next/font/google';
+
+//serif font for the Header
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['700', '900'],
+  display: 'swap',
+});
+
+//font for the Thai Description
+const mitr = Mitr({
+  subsets: ['thai', 'latin'],
+  weight: ['300', '400'], // 300 (Light) looks very sleek for descriptions
+  display: 'swap',
+});
 
 const covers = [
   '/img/cover1.jpg',
@@ -20,7 +35,7 @@ export default function Banner() {
 
   return (
     <div
-      className="relative flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] cursor-pointer"
+      className="relative flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]"
       onClick={handleNext}
     >
       {/* Background Image */}
@@ -33,24 +48,34 @@ export default function Banner() {
       />
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 bg-black/50" />
 
       {/* Content */}
       <div
-        className="relative z-10 text-center bg-white/20 p-12 rounded-2xl shadow-xl backdrop-blur-sm max-w-3xl"
-        onClick={(e) => e.stopPropagation()} // prevent card clicks from cycling the image
+        className="relative z-10 text-center bg-white/10 p-12 rounded-2xl shadow-2xl backdrop-blur-md max-w-3xl border border-white/20"
+        onClick={(e) => e.stopPropagation()} 
       >
-        <h1 className="text-5xl font-extrabold text-white mb-6 tracking-tight">
-          Welcome to <span className="text-yellow-400">RestaReserve</span>
+        {/* HEADER STYLING */}
+        <h1 className={`text-white mb-6 tracking-wide drop-shadow-lg ${playfair.className}`}>
+          <div className="text-2xl md:text-3xl font-medium">
+            Welcome to
+          </div>
+
+          <div className="text-5xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500 font-black italic">
+            RestaReserve
+          </div>
         </h1>
-        <p className="text-lg text-gray-200 mb-10 leading-relaxed">
+        
+        {/* DESCRIPTION STYLING */}
+        <p className={`text-l text-gray-100 mb-10 leading-loose drop-shadow-md font-light ${mitr.className}`}>
           สัมผัสประสบการณ์การจองร้านอาหารที่ง่ายและสะดวกที่สุด <br />
           เลือกร้านที่คุณชื่นชอบและจองโต๊ะได้ทันที ไม่ต้องรอนาน!
         </p>
+
         <div className="flex justify-center gap-4">
           <Link
             href="/restaurants"
-            className="bg-black !text-white text-lg font-bold py-3 px-8 rounded-full hover:bg-gray-800 transition duration-300 shadow-lg transform hover:-translate-y-1"
+            className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white text-lg font-bold py-3 px-8 rounded-full hover:from-yellow-400 hover:to-amber-500 transition-all duration-300 shadow-xl transform hover:-translate-y-1"
           >
             Explore Restaurants
           </Link>
